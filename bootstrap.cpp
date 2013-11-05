@@ -54,17 +54,12 @@ int bootstrap(int argc, char* argv[]) {
     // Enter the created context for compiling and
     // running the hello world script.     
     Context::Scope context_scope(context);
-
-    
-    
-      
-    
-    
-    
+   
+    context->Global()->Set(String::New("hello"), String::New("world"));
     
     
     // Create a string containing the JavaScript source code.
-    Handle<String> source = String::New("'Hello' + ', World!'");
+    Handle<String> source = String::New("'Hello' + ', World!' + hello");
 
     // Compile the source code.
     Handle<Script> script = Script::Compile(source);
