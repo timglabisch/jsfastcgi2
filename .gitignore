@@ -1,0 +1,8 @@
+*~
+CMakeFiles
+CMakeCache.txt
+Makefile
+*.cmake
+nbproject/*
+proj
+proj_test
