@@ -4,6 +4,7 @@
 
 #include <v8.h>
 #include <iostream>
+#include "request.h"
 
 TEST(Foo, FooBasic1) {
   EXPECT_EQ(1, 1);
@@ -25,7 +26,6 @@ TEST(Foo, FooBasic3) {
 
 
 using namespace v8;
-
 
 static void LogCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {
     std::cout << "???" << std::endl;
@@ -64,22 +64,29 @@ int bootstrap(int argc, char* argv[]) {
     context->Global()->Set(String::New("hello"), String::New("world"));
     context->Global()->Set(String::New("helloObj"), o->NewInstance());
     
+    request* r = request::newInstance();
+    r->setParam("hello", "worldParam2");
+    
+    context->Global()->Set(String::New("requestObj"), r->getV8Instance());
+    
     
     // Create a string containing the JavaScript source code.
-    Handle<String> source = String::New("'Hello' + ', World!' + hello + helloObj.hello + helloObj.sayHello()");
+    // Handle<String> source = String::New("9999999999999999 + 'Hello' + ', World!' + hello + helloObj.hello + helloObj.sayHello()");
+    
+    Handle<String> source = String::New("requestObj.getParam('hello')");
 
     // Compile the source code.
     Handle<Script> script = Script::Compile(source);
 
     // Run the script to get the result.
-    Handle<Value> result = script->Run();
+    Handle<Value> result1 = script->Run();
 
     // The persistent handle needs to be eventually disposed.
     persistent_context.Dispose();
 
     // Convert the result to an ASCII string and print it.
-    String::AsciiValue ascii(result);
-    printf("%s\n", *ascii);
+    String::AsciiValue ascii1(result1);
+    printf("%s\n", *ascii1);
     return 0;
 }
 
