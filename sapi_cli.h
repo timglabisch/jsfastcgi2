@@ -4,6 +4,13 @@
 #ifndef SAPI_CLI_H
 #define	SAPI_CLI_H
 
+class SapiRequest_Cli : public SapiRequest {
+public:
+    virtual void flush(std::string content);
+    virtual void end();
+};
+
+
 class Sapi_Cli : public Sapi {
     protected:
 int argc;

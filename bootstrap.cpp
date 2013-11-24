@@ -49,8 +49,7 @@ void execute(Handle<Context>* context, request* request, response* resonse, std:
 int bootstrap(int argc, char* argv[]) {
 
     Sapi* sapi = new Sapi_Cli(argc, argv);
-    
-    SapiRequest sapiRequest;
+    SapiRequest_Cli sapiRequest;
     
     if(argc == 1) {
         displayHelp();
@@ -84,14 +83,15 @@ int bootstrap(int argc, char* argv[]) {
         //String::AsciiValue ascii1(result1);
         //printf("%s\n", *ascii1);
 
-        std::cout << response->getContent() << std::endl;
+        sapiRequest.flush(response->getContent());
+        
+        sapiRequest.end();
 
         delete request;
         delete response;
     
     }
-    
-    
+        
     
     
     delete sapi;

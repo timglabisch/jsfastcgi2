@@ -2,6 +2,16 @@
 #include "sapi_cli.h"
 #include <string>
 #include <fstream>
+#include <iostream>
+
+
+void SapiRequest_Cli::flush(std::string content) {
+    std::cout << content;
+}
+
+void SapiRequest_Cli::end() {
+    std::cout << std::endl;
+}
 
 Sapi_Cli::Sapi_Cli(int argc, char** argv) {
     this->argc = argc;
