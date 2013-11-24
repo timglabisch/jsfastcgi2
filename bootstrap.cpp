@@ -40,7 +40,7 @@ static void LogCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 void displayHelp() {
     std::cout << std::endl;
-    std::cout << "usage program [FILENAME] " << std::endl;
+    std::cout << "usage program [FILENAME1] [FILENAME2] [FILENAME3] " << std::endl;
     std::cout << std::endl;
 }
 
@@ -52,13 +52,13 @@ int bootstrap(int argc, char* argv[]) {
     
     SapiRequest sapiRequest;
     
+    if(argc == 1) {
+        displayHelp();
+        return 0;
+    }
+    
     while(sapi->accept(&sapiRequest) == true) {
     
-        if(sapiRequest.filename == "") {
-            displayHelp();
-            return 0;
-        }
-
         if(sapiRequest.script == "") {
             std::cout << std::endl << "File is empty or does not exist" << std::endl;
             return 0;
