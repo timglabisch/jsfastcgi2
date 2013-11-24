@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.6) 
 project (proj) 
 
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+
 set(PROJ_NAME "proj")
 set(PROJ_NAME_FASTCGI "proj_fcgi")
 set(PROJ_NAME_TEST "test")
@@ -41,7 +43,7 @@ SET_TARGET_PROPERTIES(${PROJ_NAME_FASTCGI} PROPERTIES COMPILE_FLAGS -DSAPI_FASTC
 
 add_executable (${PROJ_NAME_TEST}
     ${FILES_CPP}
-    main_test.cc
+    main.cc
 )
 
 include_directories (
