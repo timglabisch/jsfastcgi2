@@ -6,6 +6,10 @@
 #include <iostream>
 #include "request.h"
 
+#include "sapi_cli.h"
+
+#include <fstream>
+
 TEST(Foo, FooBasic1) {
   EXPECT_EQ(1, 1);
   EXPECT_EQ(1, 1);
@@ -35,8 +39,31 @@ static void LogCallback(const v8::FunctionCallbackInfo<v8::Value>& args) {
     );
 }
 
+void displayHelp() {
+    std::cout << std::endl;
+    std::cout << "usage program [FILENAME] " << std::endl;
+    std::cout << std::endl;
+}
+
 int bootstrap(int argc, char* argv[]) {
 
+    Sapi* sapi = new Sapi_Cli(argc, argv);
+    
+    std::string filename = sapi->getFilename();
+    
+    if(filename == "") {
+        displayHelp();
+        return 0;
+    }
+    
+    std::string fileContent(std::istreambuf_iterator<char>(std::ifstream(filename.c_str()).rdbuf()), std::istreambuf_iterator<char>());
+    
+    if(fileContent == "") {
+        std::cout << std::endl << "File is empty or does not exist" << std::endl;
+        return 0;
+    } 
+    
+    
     // Get the default Isolate created at startup.
     Isolate* isolate = Isolate::GetCurrent();
 
@@ -73,7 +100,7 @@ int bootstrap(int argc, char* argv[]) {
     // Create a string containing the JavaScript source code.
     // Handle<String> source = String::New("9999999999999999 + 'Hello' + ', World!' + hello + helloObj.hello + helloObj.sayHello()");
     
-    Handle<String> source = String::New("requestObj.getParam('hello')");
+    Handle<String> source = String::New(fileContent.c_str());
 
     // Compile the source code.
     Handle<Script> script = Script::Compile(source);
