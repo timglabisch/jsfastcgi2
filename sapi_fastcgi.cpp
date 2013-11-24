@@ -12,16 +12,8 @@ void SapiRequest_FastCgi::flush(std::string content) {
     
     fcgi_streambuf cout_fcgi_streambuf(this->fcgx_request->out);
     std::ostream fout(&cout_fcgi_streambuf);
-    std::cout << content;
-    
-    fout << "Content-type: text/html\r\n" <<
-               "\r\n" <<
-               "<title>CGI Hello!</title>" <<
-               "<h1>CGI Hello!</h1>" <<
-               "Request number" << "\n" << std::endl;
-    
+       
     fout << content;
-    std::cout << "uhh";
     
 }
 
@@ -50,23 +42,8 @@ bool Sapi_FastCgi::accept(SapiRequest_FastCgi* request) {
         std::cout << "fxcg_accept is " << fxcg_accept << std::endl;
         return false;
     }
-        
-    
+            
     std::cout << "after accept" << std::endl;
-    
-    /*
-    #if HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
-        std::cin  = &cin_fcgi_streambuf;
-        std::cout = &cout_fcgi_streambuf;
-        std::cerr = &cerr_fcgi_streambuf;
-    #else
-        std::cin.rdbuf(&cin_fcgi_streambuf);
-        std::cout.rdbuf(&cout_fcgi_streambuf);
-        std::cerr.rdbuf(&cerr_fcgi_streambuf);
-    #endif
-     */
-    
-    
         
     std::string filename = FCGX_GetParam("SCRIPT_FILENAME", this->fcgx_request->envp);
     std::string script(std::istreambuf_iterator<char>(std::ifstream(filename.c_str()).rdbuf()), std::istreambuf_iterator<char>());

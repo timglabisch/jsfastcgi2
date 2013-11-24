@@ -54,11 +54,14 @@ int bootstrap(int argc, char* argv[]) {
     
     std::cout << "bootstrap" << std::endl;
     
+#ifdef SAPI_FASTCGI
     Sapi_FastCgi* sapi = new Sapi_FastCgi();
     SapiRequest_FastCgi sapiRequest;
+#else
+    Sapi* sapi = new Sapi_Cli(argc, argv);
+    SapiRequest_Cli sapiRequest;
+#endif
     
-    //  Sapi* sapi = new Sapi_Cli(argc, argv);
-    //  SapiRequest_Cli sapiRequest;
     
     std::cout << "before sapi accept" << std::endl;
     

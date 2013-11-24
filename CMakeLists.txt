@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 project (proj) 
 
 set(PROJ_NAME "proj")
+set(PROJ_NAME_FASTCGI "proj_fcgi")
 set(PROJ_NAME_TEST "test")
 set(INCLUDE_DIRECTORIES 
 	/home/dev/proj/cpp/v8/include/
@@ -31,6 +32,13 @@ add_executable (${PROJ_NAME}
     main.cc
 )
 
+add_executable (${PROJ_NAME_FASTCGI} 
+    ${FILES_CPP}
+    main.cc
+)
+
+SET_TARGET_PROPERTIES(${PROJ_NAME_FASTCGI} PROPERTIES COMPILE_FLAGS -DSAPI_FASTCGI)
+
 add_executable (${PROJ_NAME_TEST}
     ${FILES_CPP}
     main_test.cc
@@ -41,5 +49,6 @@ include_directories (
 )
  
 TARGET_LINK_LIBRARIES(${PROJ_NAME} ${TARGET_LINK_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJ_NAME_FASTCGI} ${TARGET_LINK_LIBRARIES})
 TARGET_LINK_LIBRARIES(${PROJ_NAME_TEST} ${TARGET_LINK_LIBRARIES}) 
 
