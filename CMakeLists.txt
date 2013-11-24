@@ -6,6 +6,7 @@ set(PROJ_NAME_TEST "test")
 set(INCLUDE_DIRECTORIES 
 	/home/dev/proj/cpp/v8/include/
 	/home/dev/proj/cpp/gtest/include/
+        /home/dev/proj/cpp/fastcgi/include
 	/usr/local/include
 )
 
@@ -18,6 +19,8 @@ set(TARGET_LINK_LIBRARIES
 	/home/dev/proj/cpp/gtest/lib/.libs/libgtest_main.a
         /home/dev/proj/cpp/gtest/lib/.libs/libgtest.a
 	pthread
+        fcgi
+        fcgi++
 )
 
 FILE(GLOB FILES_CPP "*.cpp")

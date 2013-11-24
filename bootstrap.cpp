@@ -7,7 +7,11 @@
 #include "request.h"
 
 #include "sapi_cli.h"
+#include "sapi_fastcgi.h"
 #include "response.h"
+
+
+#include<unistd.h>
 
 TEST(Foo, FooBasic1) {
   EXPECT_EQ(1, 1);
@@ -47,20 +51,27 @@ void displayHelp() {
 void execute(Handle<Context>* context, request* request, response* resonse, std::string fileContent);
 
 int bootstrap(int argc, char* argv[]) {
-
-    Sapi* sapi = new Sapi_Cli(argc, argv);
-    SapiRequest_Cli sapiRequest;
     
-    if(argc == 1) {
-        displayHelp();
-        return 0;
-    }
+    std::cout << "bootstrap" << std::endl;
     
+    Sapi_FastCgi* sapi = new Sapi_FastCgi();
+    SapiRequest_FastCgi sapiRequest;
+    
+    //  Sapi* sapi = new Sapi_Cli(argc, argv);
+    //  SapiRequest_Cli sapiRequest;
+    
+    std::cout << "before sapi accept" << std::endl;
+    
+    //if(argc == 1) {
+    //    displayHelp();
+    //    return 0;
+    //}
+            
     while(sapi->accept(&sapiRequest) == true) {
     
         if(sapiRequest.script == "") {
             std::cout << std::endl << "File is empty or does not exist" << std::endl;
-            return 0;
+            continue;
         } 
 
 
