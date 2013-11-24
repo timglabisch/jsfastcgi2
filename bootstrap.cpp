@@ -7,6 +7,7 @@
 #include "request.h"
 
 #include "sapi_cli.h"
+#include "response.h"
 
 #include <fstream>
 
@@ -91,10 +92,16 @@ int bootstrap(int argc, char* argv[]) {
     context->Global()->Set(String::New("hello"), String::New("world"));
     context->Global()->Set(String::New("helloObj"), o->NewInstance());
     
-    request* r = request::newInstance();
-    r->setParam("hello", "worldParam2");
     
-    context->Global()->Set(String::New("requestObj"), r->getV8Instance());
+    // request object
+    request* request = request::newInstance();
+    request->setParam("hello", "worldParam2");
+    
+    context->Global()->Set(String::New("request"), request->getV8Instance());
+    
+    // response object
+    response* response = response::newInstance();
+    context->Global()->Set(String::New("response"), response->getV8Instance());
     
     
     // Create a string containing the JavaScript source code.
@@ -112,8 +119,11 @@ int bootstrap(int argc, char* argv[]) {
     persistent_context.Dispose();
 
     // Convert the result to an ASCII string and print it.
-    String::AsciiValue ascii1(result1);
-    printf("%s\n", *ascii1);
+    //String::AsciiValue ascii1(result1);
+    //printf("%s\n", *ascii1);
+    
+    std::cout << response->getContent() << std::endl;
+    
     return 0;
 }
 
