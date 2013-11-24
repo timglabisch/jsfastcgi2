@@ -8,11 +8,12 @@ class Sapi_Cli : public Sapi {
     protected:
 int argc;
 char** argv;
+int requestCounter;
     
     
 public: 
     Sapi_Cli(int argc, char* argv[]);
-    std::string getFilename();
+    bool accept(SapiRequest* sapiRequest);
     
 };   
 

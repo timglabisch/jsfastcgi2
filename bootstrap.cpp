@@ -9,8 +9,6 @@
 #include "sapi_cli.h"
 #include "response.h"
 
-#include <fstream>
-
 TEST(Foo, FooBasic1) {
   EXPECT_EQ(1, 1);
   EXPECT_EQ(1, 1);
@@ -52,44 +50,50 @@ int bootstrap(int argc, char* argv[]) {
 
     Sapi* sapi = new Sapi_Cli(argc, argv);
     
-    std::string filename = sapi->getFilename();
+    SapiRequest sapiRequest;
     
-    if(filename == "") {
-        displayHelp();
-        return 0;
+    while(sapi->accept(&sapiRequest) == true) {
+    
+        if(sapiRequest.filename == "") {
+            displayHelp();
+            return 0;
+        }
+
+        if(sapiRequest.script == "") {
+            std::cout << std::endl << "File is empty or does not exist" << std::endl;
+            return 0;
+        } 
+
+
+        // startup v8
+        Isolate* isolate = Isolate::GetCurrent();
+        HandleScope handle_scope(isolate);
+        Handle<Context> context = Context::New(isolate);
+        Persistent<Context> persistent_context(isolate, context);
+        Context::Scope context_scope(context);
+
+        request* request = request::newInstance();
+        response* response = response::newInstance();
+
+        execute(&context, request, response, sapiRequest.script);
+
+        // The persistent handle needs to be eventually disposed.
+        persistent_context.Dispose();
+
+        // Convert the result to an ASCII string and print it.
+        //String::AsciiValue ascii1(result1);
+        //printf("%s\n", *ascii1);
+
+        std::cout << response->getContent() << std::endl;
+
+        delete request;
+        delete response;
+    
     }
     
-    std::string fileContent(std::istreambuf_iterator<char>(std::ifstream(filename.c_str()).rdbuf()), std::istreambuf_iterator<char>());
-    
-    if(fileContent == "") {
-        std::cout << std::endl << "File is empty or does not exist" << std::endl;
-        return 0;
-    } 
     
     
-    // startup v8
-    Isolate* isolate = Isolate::GetCurrent();
-    HandleScope handle_scope(isolate);
-    Handle<Context> context = Context::New(isolate);
-    Persistent<Context> persistent_context(isolate, context);
-    Context::Scope context_scope(context);
     
-    request* request = request::newInstance();
-    response* response = response::newInstance();
-    
-    execute(&context, request, response, fileContent);
-
-    // The persistent handle needs to be eventually disposed.
-    persistent_context.Dispose();
-
-    // Convert the result to an ASCII string and print it.
-    //String::AsciiValue ascii1(result1);
-    //printf("%s\n", *ascii1);
-    
-    std::cout << response->getContent() << std::endl;
-    
-    delete request;
-    delete response;
     delete sapi;
    
     
