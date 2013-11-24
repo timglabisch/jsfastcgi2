@@ -124,6 +124,11 @@ int bootstrap(int argc, char* argv[]) {
     
     std::cout << response->getContent() << std::endl;
     
+    delete request;
+    delete response;
+    delete sapi;
+   
+    
     return 0;
 }
 
