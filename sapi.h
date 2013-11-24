@@ -5,7 +5,7 @@
 
 class Sapi {
     public:
-        virtual std::string getFilename() { return ""; }   
+        virtual std::string getFilename() { return ""; }
 };   
 
 

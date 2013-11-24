@@ -46,6 +46,8 @@ void displayHelp() {
     std::cout << std::endl;
 }
 
+void execute(Handle<Context>* context, request* request, response* resonse, std::string fileContent);
+
 int bootstrap(int argc, char* argv[]) {
 
     Sapi* sapi = new Sapi_Cli(argc, argv);
@@ -65,55 +67,17 @@ int bootstrap(int argc, char* argv[]) {
     } 
     
     
-    // Get the default Isolate created at startup.
+    // startup v8
     Isolate* isolate = Isolate::GetCurrent();
-
-    // Create a stack-allocated handle scope.
     HandleScope handle_scope(isolate);
-    
-    // Create a new context.
     Handle<Context> context = Context::New(isolate);
-    
-    
-    // Here's how you could create a Persistent handle to the context, if needed.
     Persistent<Context> persistent_context(isolate, context);
-
-        
-    // Enter the created context for compiling and
-    // running the hello world script.     
     Context::Scope context_scope(context);
     
-    Local<ObjectTemplate> o = ObjectTemplate::New();
-    o->Set(String::New("hello"), String::New("worldObject!"));
-    
-    Local<FunctionTemplate> f = FunctionTemplate::New(LogCallback);
-    o->Set(String::New("sayHello"), f);
-   
-    context->Global()->Set(String::New("hello"), String::New("world"));
-    context->Global()->Set(String::New("helloObj"), o->NewInstance());
-    
-    
-    // request object
     request* request = request::newInstance();
-    request->setParam("hello", "worldParam2");
-    
-    context->Global()->Set(String::New("request"), request->getV8Instance());
-    
-    // response object
     response* response = response::newInstance();
-    context->Global()->Set(String::New("response"), response->getV8Instance());
     
-    
-    // Create a string containing the JavaScript source code.
-    // Handle<String> source = String::New("9999999999999999 + 'Hello' + ', World!' + hello + helloObj.hello + helloObj.sayHello()");
-    
-    Handle<String> source = String::New(fileContent.c_str());
-
-    // Compile the source code.
-    Handle<Script> script = Script::Compile(source);
-
-    // Run the script to get the result.
-    Handle<Value> result1 = script->Run();
+    execute(&context, request, response, fileContent);
 
     // The persistent handle needs to be eventually disposed.
     persistent_context.Dispose();
@@ -130,6 +94,39 @@ int bootstrap(int argc, char* argv[]) {
    
     
     return 0;
+}
+
+void execute(Handle<Context>* context, request* request, response* response, std::string fileContent) {
+    Local<ObjectTemplate> o = ObjectTemplate::New();
+    o->Set(String::New("hello"), String::New("worldObject!"));
+    
+    Local<FunctionTemplate> f = FunctionTemplate::New(LogCallback);
+    o->Set(String::New("sayHello"), f);
+   
+    (*context)->Global()->Set(String::New("hello"), String::New("world"));
+    (*context)->Global()->Set(String::New("helloObj"), o->NewInstance());
+    
+    
+    // request object
+    
+    request->setParam("hello", "worldParam2");
+    
+    (*context)->Global()->Set(String::New("request"), request->getV8Instance());
+    
+    // response object
+    (*context)->Global()->Set(String::New("response"), response->getV8Instance());
+    
+    
+    // Create a string containing the JavaScript source code.
+    // Handle<String> source = String::New("9999999999999999 + 'Hello' + ', World!' + hello + helloObj.hello + helloObj.sayHello()");
+    
+    Handle<String> source = String::New(fileContent.c_str());
+
+    // Compile the source code.
+    Handle<Script> script = Script::Compile(source);
+
+    // Run the script to get the result.
+    Handle<Value> result1 = script->Run();
 }
 
 
